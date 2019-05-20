@@ -21,7 +21,7 @@
           apply the skin class to the body tag so the changes take effect. -->
     <link rel="stylesheet" href="~/Content/AdminLTE-2.4.10/dist/css/skins/skin-black.min.css"/>
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -181,8 +181,8 @@
                   </span>
               </a>
               <ul class="treeview-menu">
-                  <li><a href="#">Colaboradores</a></li>
-                  <li><a href="#">Projetos</a></li>
+                  <li><a href="@Url.Action("Index", "Colaboradores")">Colaboradores</a></li>
+                  <li><a href="@Url.Action("Index", "Projetos")">Projetos</a></li>
               </ul>
         </li>
         <li><a href="#"><i class="fa fa-calendar-check-o"></i> <span>Apontamento</span></a></li>
