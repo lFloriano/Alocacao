@@ -1,0 +1,125 @@
+﻿@model List<Colaborador>
+@using Alocacao.Models.Colaboradores;
+
+@{
+    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--Filtro-->
+<div class="row">
+
+    @using (Html.BeginForm("Filtrar", "Colaboradores", FormMethod.Post))
+    {
+        <div class="col-md-12">
+            <div class="box box-solid box-primary">
+                <div class="box-header">
+                    <button onclick="ToggleFiltro(this)" data-toggle="divFiltro" style="float: right;" title="Mostrar/Esconder filtro" type="button" class="btn btn-link btn-sm">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                    <h4 class="box-title">Filtro</h4>
+                </div>
+                <div class="box-body" id="divFiltro">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                <input name="Nome" type="text" class="form-control" placeholder="Nome">
+                            </div>
+                            <br />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-file-text-o"></i></span>
+                                <input name="NumeroProjetos" type="text" class="form-control" placeholder="Número de projetos">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-black-tie"></i></span>
+                                <input name="Cargo" type="text" class="form-control" placeholder="Cargo">
+                            </div>
+                            <br />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-bank"></i></span>
+                                <input name="Departamento" type="text" class="form-control" placeholder="Departamento">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar-minus-o"></i></span>
+                                <input name="DataDe" type="date" class="form-control">
+                            </div>
+                            <br />
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar-plus-o"></i></span>
+                                <input name="DataAte" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" title="filtrar resultados" class="btn btn-app btn-flat">
+                                <i class="fa fa-search"></i>&nbsp;Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    
+</div>
+
+
+<!--colaboradores-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="box  box-solid box-primary">
+            <div class="box-header">
+                <h4 class="box-title">Colaboradores</h4>
+            </div>
+            <div class="box-body box-solid box-primary">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>Departamento</th>
+                            <th>Data de Contratação</th>
+                            <th>Número de Projetos</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Colaborador c in Model)
+                        {
+                            <tr>
+                                <td>@c.Nome</td>
+                                <td>@c.Cargo</td>
+                                <td>@c.Departamento</td>
+                                <td>@c.DataContratacao.ToString("dd/MM/yyyy")</td>
+                                <td>@c.NumeroProjetos</td>
+                                <th>
+                                    <a href="@Url.Action("VerColaborador", "Colaboradores", new { id = c.Id })" style="float: right;" title="Ver detalhes do colaborador" class="btn btn-primary btn-xs">
+                                        <i class="fa fa-share"></i>
+                                    </a>
+                                </th>
+                            </tr>
+                            }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function ToggleFiltro(obj) {
+        var targetObject = document.getElementById(obj.getAttribute("data-toggle"));
+
+        if (targetObject.style.display == "none") {
+            targetObject.style.display = "";
+        }
+        else {
+            targetObject.style.display = "none";
+        }
+    }
+</script>

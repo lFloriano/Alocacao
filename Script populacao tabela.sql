@@ -76,3 +76,16 @@ Values
 ('Isaac Newton', 'Inovação')
 
 ------COLABORADORES-----------
+
+insert into Colaboradores Values
+(getdate(), 'Keith Richards', 'Programador', 'Inovação', getdate()),
+(getdate(), 'Chuck Berry', 'Analista de negócio', 'Marketing', getdate()),
+(getdate(), 'John Paul Jones', 'Designer', 'Marketing', getdate()),
+(getdate(), 'Seasick Steve', 'Assistente de comunicação', 'Marketing', getdate()),
+(getdate(), 'Ronaldo McRonald', 'Designer', 'Inovação', getdate()),
+(getdate(), 'Bruce Wayne', 'Programador', 'Inovação', getdate()),
+(getdate(), 'Charles Darwin', 'Gerente de Projeto', 'Inovação', getdate()),
+(getdate(), 'Martin Luther', 'Assistente contábil', 'Contabilidade', getdate()),
+(getdate(), 'Genghis Kahn', 'Assistente de comunicação', 'Marketing', getdate()),
+(getdate(), 'Napoleão Bonaparte', 'Gerente de Projeto', 'Inovação', getdate()),
+(getdate(), 'Poucas Trancas', 'Assistente de comunicação', 'Marketing', getdate())

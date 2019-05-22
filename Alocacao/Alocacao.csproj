@@ -7350,6 +7350,7 @@
     <Content Include="Content\AdminLTE-2.4.10\plugins\input-mask\phone-codes\phone-codes.json" />
     <Content Include="Content\AdminLTE-2.4.10\README.md" />
     <Content Include="Content\AdminLTE-2.4.10\yarn.lock" />
+    <None Include="Properties\PublishProfiles\ProfileAlocacao.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
