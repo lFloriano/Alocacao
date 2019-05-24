@@ -1,0 +1,162 @@
+﻿@using Alocacao.Models.Colaboradores
+@using Alocacao.Models.Projetos
+@model ColaboradorProjetos
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--Header-->
+<div class="row">
+
+</div>
+
+<!--pagina completa-->
+<div class="row">
+    
+    <!--Info Colaborador-->
+    <div class="col-md-2">
+        <div class="box box-solid box-primary">
+            <div class="box-header">
+                <h4 class="box-title">Colaborador</h4>
+                <button type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+
+            <div class="box-body box-profile">
+                <img class="profile-user-img img-responsive img-circle" src="@Model.Colaborador.ProfilePic" alt="">
+                <h3 class="profile-username text-center">@Model.Colaborador.Nome</h3>
+                <p class="text-muted text-center">@Model.Colaborador.Cargo</p>
+                <ul class="list-group list-group-unbordered">
+                    @*<li class="list-group-item">
+                        <b>Nome</b> <a class="pull-right">@Model.Colaborador.Nome</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Cargo</b> <a class="pull-right">@Model.Colaborador.Cargo</a>
+                    </li>*@
+                    <li class="list-group-item">
+                        <b>Departamento</b> <a class="pull-right">@Model.Colaborador.Departamento</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Contratação</b> <a class="pull-right">@Model.Colaborador.DataContratacao.ToString("dd/MM/yyyy")</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Número de projetos</b> <a class="pull-right">@Model.Colaborador.NumeroProjetos</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Etc</b>
+                        <a class="pull-right">Lorem Ipsum</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!--Projetos-->
+    <div class="col-md-10">
+
+        <!--Disponiveis-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-solid box-primary">
+                    <div class="box-header">
+                        <div class="box-title"><h4>Projetos Disponíveis</h4></div>
+                        <button type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>                   
+                    </div>
+                    <div class="box-body">
+                        <table class="table table-bordered" table-striped>
+                            <thead>
+                                <tr>
+                                    <th>Projeto</th>
+                                    <th>Cliente</th>
+                                    <th>Responsável</th>
+                                    <th>Início</th>
+                                    <th>Fim (previsto)</th>
+                                    <th>Status</th>
+                                    <th>Descrição</th>
+                                    <th>Nº Colaboradores alocados</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Projeto p in Model.ProjetosDisponiveis)
+                                {
+                                    string dataInicio = p.DataInicio != null ? p.DataInicio.Value.ToString("dd/MM/yyyy") : "";
+                                    string dataFim = p.DataFim != null ? p.DataFim.Value.ToString("dd/MM/yyyy") : "";
+
+                                    <tr>
+                                        <td>@p.Nome</td>
+                                        <td>@p.NomeCliente</td>
+                                        <td>@p.NomeResponsavel</td>
+                                        <td>@dataInicio</td>
+                                        <td>@dataFim</td>
+                                        <td>@p.StatusProjeto</td>
+                                        <td>@p.Descricao</td>
+                                        <td>@p.ColaboradoresAlocados</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!--Alocados-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-solid box-primary">
+                    <div class="box-header">
+                        <div class="box-title"><h4>Projetos Alocados</h4></div>
+                        <button type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>                  
+                    </div>
+                    <div class="box-body">
+                        <table class="table table-bordered" table-striped>
+                            <thead>
+                                <tr>
+                                    <th>Projeto</th>
+                                    <th>Cliente</th>
+                                    <th>Responsável</th>
+                                    <th>Início</th>
+                                    <th>Fim (previsto)</th>
+                                    <th>Status</th>
+                                    <th>Descrição</th>
+                                    <th>Nº Colaboradores alocados</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Projeto p in Model.ProjetosAlocados)
+                                {
+                                    string dataInicio = p.DataInicio != null ? p.DataInicio.Value.ToString("dd/MM/yyyy") : "";
+                                    string dataFim = p.DataFim != null ? p.DataFim.Value.ToString("dd/MM/yyyy") : "";
+
+                                    <tr>
+                                        <td>@p.Nome</td>
+                                        <td>@p.NomeCliente</td>
+                                        <td>@p.NomeResponsavel</td>
+                                        <td>@dataInicio</td>
+                                        <td>@dataFim</td>
+                                        <td>@p.StatusProjeto</td>
+                                        <td>@p.Descricao</td>
+                                        <td>@p.ColaboradoresAlocados</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+

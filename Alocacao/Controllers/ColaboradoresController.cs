@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Alocacao.Models.Colaboradores;
+using Alocacao.Models.Projetos;
 using System.Data.SqlClient;
 using System.Configuration;
 
@@ -144,6 +145,164 @@ namespace Alocacao.Controllers
             }
 
             return retorno;
+        }
+
+        public ActionResult Colaborador(int id)
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand() { Connection = connection };
+            ColaboradorProjetos colaborador = new ColaboradorProjetos();
+            colaborador.ProjetosDisponiveis = new List<Projeto>();
+            colaborador.ProjetosAlocados = new List<Projeto>();
+
+            #region queryColaboradro
+            string queryColaborador = @"
+SELECT TOP 1
+	c.*,
+	(SELECT COUNT(*) FROM Alocacao WHERE IdColaborador = @IdColaborador) AS NumeroProjetos
+FROM 
+	Colaboradores c 
+WHERE 
+	c.Id = @IdColaborador";
+            #endregion
+
+            #region QueryDisponiveis
+            string queryProjDisp = @"
+SELECT DISTINCT
+    p.*,
+	NumColab.ColaboradoresAlocados
+FROM 
+    Projetos p
+    LEFT JOIN(
+        SELECT DISTINCT IdProjeto
+		FROM alocacao
+		WHERE IdColaborador = @IdColaborador		
+	)a ON a.IdProjeto = p.Id
+
+	LEFT JOIN (
+		SELECT IdProjeto, COUNT(*) AS ColaboradoresAlocados
+		FROM Alocacao
+		GROUP BY IdProjeto
+	)NumColab ON  NumColab.IdProjeto = p.Id
+WHERE
+	a.IdProjeto IS NULL";
+            #endregion
+
+            #region QueryAlocados
+            string queryProjAloca = @"
+SELECT DISTINCT
+    p.*,
+	NumColab.ColaboradoresAlocados
+FROM 
+    Projetos p
+    LEFT JOIN(
+        SELECT DISTINCT IdProjeto
+		FROM alocacao
+		WHERE IdColaborador = @IdColaborador		
+	)a ON a.IdProjeto = p.Id
+
+	LEFT JOIN (
+		SELECT IdProjeto, COUNT(*) AS ColaboradoresAlocados
+		FROM Alocacao
+		GROUP BY IdProjeto
+	)NumColab ON  NumColab.IdProjeto = p.Id
+WHERE
+	a.IdProjeto IS NOT NULL";
+            #endregion
+
+            try
+            {
+                connection.Open();
+
+                #region colaborador
+                command.CommandText = queryColaborador;
+                command.Parameters.AddWithValue("IdColaborador", id);
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    colaborador.Colaborador = new Colaborador()
+                    {
+                        Id = int.Parse(reader["Id"].ToString()),
+                        Nome = reader["Nome"].ToString(),
+                        Cargo = reader["Cargo"].ToString(),
+                        Departamento = reader["Departamento"].ToString(),
+                        DataContratacao = DateTime.Parse(reader["DataContratacao"].ToString()),
+                        NumeroProjetos = int.Parse(reader["NumeroProjetos"].ToString()),
+                        ProfilePic = "" //TODO: ADD IMAGENS
+                    };
+                }
+
+                command.Parameters.Clear();
+                reader.Close();
+                #endregion
+
+                #region projetosDisponiveis
+                command.CommandText = queryProjDisp;
+                command.Parameters.AddWithValue("IdColaborador", id);
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    colaborador.ProjetosDisponiveis.Add(
+                        new Projeto()
+                        {
+                            Id = int.Parse(reader["Id"].ToString()),
+                            Nome = reader["Nome"].ToString(),
+                            Descricao = reader["Descricao"].ToString(),
+                            IdResponsavel = int.Parse(reader["IdResponsavel"].ToString()),
+                            DataInicio = DateTime.Parse(reader["DataInicio"].ToString()),
+                            DataFim = DateTime.Parse(reader["DataFim"].ToString()),
+                            IdCliente = int.Parse(reader["IdCliente"].ToString()),
+                            NomeCliente = reader["NomeCliente"].ToString(),
+                            StatusProjeto = reader["StatusProjeto"].ToString(),
+                            ColaboradoresAlocados = int.Parse(reader["ColaboradoresAlocados"].ToString())
+                        }    
+                    );
+                }
+                command.Parameters.Clear();
+                reader.Close();
+
+                #endregion
+
+                #region projetosAlocados
+                command.CommandText = queryProjAloca;
+                command.Parameters.AddWithValue("IdColaborador", id);
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    colaborador.ProjetosAlocados.Add(
+                        new Projeto()
+                        {
+                            Id = int.Parse(reader["Id"].ToString()),
+                            Nome = reader["Nome"].ToString(),
+                            Descricao = reader["Descricao"].ToString(),
+                            IdResponsavel = int.Parse(reader["IdResponsavel"].ToString()),
+                            DataInicio = DateTime.Parse(reader["DataInicio"].ToString()),
+                            DataFim = DateTime.Parse(reader["DataFim"].ToString()),
+                            IdCliente = int.Parse(reader["IdCliente"].ToString()),
+                            NomeCliente = reader["NomeCliente"].ToString(),
+                            StatusProjeto = reader["StatusProjeto"].ToString(),
+                            ColaboradoresAlocados = int.Parse(reader["ColaboradoresAlocados"].ToString())
+                        }
+                    );
+                }
+                command.Parameters.Clear();
+                reader.Close();
+
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                colaborador.Colaborador = new Colaborador();
+                colaborador.ProjetosDisponiveis = new List<Projeto>();
+                colaborador.ProjetosAlocados = new List<Projeto>();
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return View(colaborador);
         }
     }
 

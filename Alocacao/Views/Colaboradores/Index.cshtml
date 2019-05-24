@@ -14,10 +14,10 @@
         <div class="col-md-12">
             <div class="box box-solid box-primary">
                 <div class="box-header">
-                    <button onclick="ToggleFiltro(this)" data-toggle="divFiltro" style="float: right;" title="Mostrar/Esconder filtro" type="button" class="btn btn-link btn-xs">
-                        <i class="fa fa-eye"></i>
-                    </button>
                     <h4 class="box-title">Filtro</h4>
+                    <button type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
                 </div>
                 <div class="box-body" id="divFiltro">
                     <div class="row">
@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" title="filtrar resultados" class="btn btn-app btn-flat">
+                            <button type="submit" title="filtrar resultados" class="btn btn-flat">
                                 <i class="fa fa-search"></i>&nbsp;Filtrar
                             </button>
                         </div>
@@ -96,7 +96,7 @@
                                 <td>@c.DataContratacao.ToString("dd/MM/yyyy")</td>
                                 <td>@c.NumeroProjetos</td>
                                 <th>
-                                    <a href="@Url.Action("VerColaborador", "Colaboradores", new { id = c.Id })" style="float: right;" title="Ver detalhes do colaborador" class="btn btn-primary btn-xs">
+                                    <a href="@Url.Action("Colaborador", "Colaboradores", new { id = c.Id })" style="float: right;" title="Ver detalhes do colaborador" class="btn btn-primary btn-xs">
                                         <i class="fa fa-share"></i>
                                     </a>
                                 </th>
@@ -109,16 +109,3 @@
     </div>
 
 </div>
-
-<script>
-    function ToggleFiltro(obj) {
-        var targetObject = document.getElementById(obj.getAttribute("data-toggle"));
-
-        if (targetObject.style.display == "none") {
-            targetObject.style.display = "";
-        }
-        else {
-            targetObject.style.display = "none";
-        }
-    }
-</script>
