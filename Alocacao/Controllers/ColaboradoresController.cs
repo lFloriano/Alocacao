@@ -155,7 +155,7 @@ namespace Alocacao.Controllers
             colaborador.ProjetosDisponiveis = new List<Projeto>();
             colaborador.ProjetosAlocados = new List<Projeto>();
 
-            #region queryColaboradro
+            #region queryColaborador
             string queryColaborador = @"
 SELECT TOP 1
 	c.*,
@@ -170,7 +170,9 @@ WHERE
             string queryProjDisp = @"
 SELECT DISTINCT
     p.*,
-	NumColab.ColaboradoresAlocados
+	COALESCE(NumColab.ColaboradoresAlocados, 0) AS ColaboradoresAlocados,
+	c.Nome AS NomeCliente,
+    g.Nome AS NomeResponsavel
 FROM 
     Projetos p
     LEFT JOIN(
@@ -184,6 +186,9 @@ FROM
 		FROM Alocacao
 		GROUP BY IdProjeto
 	)NumColab ON  NumColab.IdProjeto = p.Id
+
+	LEFT JOIN Clientes c on c.Id = p.IdCliente
+    LEFT JOIN Gestores g on g.Id = p.Responsavel
 WHERE
 	a.IdProjeto IS NULL";
             #endregion
@@ -192,7 +197,9 @@ WHERE
             string queryProjAloca = @"
 SELECT DISTINCT
     p.*,
-	NumColab.ColaboradoresAlocados
+	COALESCE(NumColab.ColaboradoresAlocados, 0) AS ColaboradoresAlocados,
+	c.Nome AS NomeCliente,
+    g.Nome AS NomeResponsavel
 FROM 
     Projetos p
     LEFT JOIN(
@@ -206,6 +213,9 @@ FROM
 		FROM Alocacao
 		GROUP BY IdProjeto
 	)NumColab ON  NumColab.IdProjeto = p.Id
+
+	LEFT JOIN Clientes c on c.Id = p.IdCliente
+    LEFT JOIN Gestores g on g.Id = p.Responsavel
 WHERE
 	a.IdProjeto IS NOT NULL";
             #endregion
@@ -249,7 +259,8 @@ WHERE
                             Id = int.Parse(reader["Id"].ToString()),
                             Nome = reader["Nome"].ToString(),
                             Descricao = reader["Descricao"].ToString(),
-                            IdResponsavel = int.Parse(reader["IdResponsavel"].ToString()),
+                            IdResponsavel = int.Parse(reader["Responsavel"].ToString()),
+                            NomeResponsavel = reader["NomeResponsavel"].ToString(),
                             DataInicio = DateTime.Parse(reader["DataInicio"].ToString()),
                             DataFim = DateTime.Parse(reader["DataFim"].ToString()),
                             IdCliente = int.Parse(reader["IdCliente"].ToString()),
@@ -276,7 +287,8 @@ WHERE
                             Id = int.Parse(reader["Id"].ToString()),
                             Nome = reader["Nome"].ToString(),
                             Descricao = reader["Descricao"].ToString(),
-                            IdResponsavel = int.Parse(reader["IdResponsavel"].ToString()),
+                            IdResponsavel = int.Parse(reader["Responsavel"].ToString()),
+                            NomeResponsavel = reader["NomeResponsavel"].ToString(),
                             DataInicio = DateTime.Parse(reader["DataInicio"].ToString()),
                             DataFim = DateTime.Parse(reader["DataFim"].ToString()),
                             IdCliente = int.Parse(reader["IdCliente"].ToString()),

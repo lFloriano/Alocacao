@@ -104,3 +104,5 @@ values
 	(getdate(), 'Projeto H','Exemplo de texto com a descrição do projeto', 4, '2019-01-04', '2019-10-14', 3, 'Pausado'),
 	(getdate(), 'Projeto I','Exemplo de texto com a descrição do projeto', 5, '2019-01-01', '2019-07-29', 4, 'Em andamento'),
 	(getdate(), 'Projeto J','Exemplo de texto com a descrição do projeto', 5, '2019-02-02', '2019-10-22', 3, 'Em andamento')
+
+	update projetos set responsavel = 1 where responsavel = 5
