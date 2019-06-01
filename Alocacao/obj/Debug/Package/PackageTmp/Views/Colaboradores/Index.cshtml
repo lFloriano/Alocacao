@@ -14,48 +14,48 @@
         <div class="col-md-12">
             <div class="box box-solid box-primary">
                 <div class="box-header">
-                    <button onclick="ToggleFiltro(this)" data-toggle="divFiltro" style="float: right;" title="Mostrar/Esconder filtro" type="button" class="btn btn-link btn-sm">
-                        <i class="fa fa-eye"></i>
-                    </button>
                     <h4 class="box-title">Filtro</h4>
+                    <button type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
                 </div>
                 <div class="box-body" id="divFiltro">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                <input name="Nome" type="text" class="form-control" placeholder="Nome">
+                                <input value="@ViewBag.Nome" name="Nome" type="text" class="form-control" placeholder="Nome">
                             </div>
                             <br />
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-file-text-o"></i></span>
-                                <input name="NumeroProjetos" type="text" class="form-control" placeholder="Número de projetos">
+                                <input value="@ViewBag.NumeroProjetos" name="NumeroProjetos" type="text" class="form-control" placeholder="Número de projetos">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-black-tie"></i></span>
-                                <input name="Cargo" type="text" class="form-control" placeholder="Cargo">
+                                <input value="@ViewBag.Cargo" name="Cargo" type="text" class="form-control" placeholder="Cargo">
                             </div>
                             <br />
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-bank"></i></span>
-                                <input name="Departamento" type="text" class="form-control" placeholder="Departamento">
+                                <input value="@ViewBag.Departamento" name="Departamento" type="text" class="form-control" placeholder="Departamento">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-calendar-minus-o"></i></span>
-                                <input name="DataDe" type="date" class="form-control">
+                                <input value="@ViewBag.ContratacaoDe" min="1900-01-01" max="2100-01-01"  name="ContratadoDe" type="date" class="form-control">
                             </div>
                             <br />
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-calendar-plus-o"></i></span>
-                                <input name="DataAte" type="date" class="form-control">
+                                <input value="@ViewBag.ContratacaoAte" min="1900-01-01" max="2100-01-01" name="ContratadoAte" type="date" class="form-control">
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" title="filtrar resultados" class="btn btn-app btn-flat">
+                            <button type="submit" title="filtrar resultados" class="btn btn-flat">
                                 <i class="fa fa-search"></i>&nbsp;Filtrar
                             </button>
                         </div>
@@ -63,8 +63,7 @@
                 </div>
             </div>
         </div>
-    }
-    
+    }    
 </div>
 
 
@@ -97,7 +96,7 @@
                                 <td>@c.DataContratacao.ToString("dd/MM/yyyy")</td>
                                 <td>@c.NumeroProjetos</td>
                                 <th>
-                                    <a href="@Url.Action("VerColaborador", "Colaboradores", new { id = c.Id })" style="float: right;" title="Ver detalhes do colaborador" class="btn btn-primary btn-xs">
+                                    <a href="@Url.Action("Colaborador", "Colaboradores", new { id = c.Id })" style="float: right;" title="Ver detalhes do colaborador" class="btn btn-primary btn-xs">
                                         <i class="fa fa-share"></i>
                                     </a>
                                 </th>
@@ -110,16 +109,3 @@
     </div>
 
 </div>
-
-<script>
-    function ToggleFiltro(obj) {
-        var targetObject = document.getElementById(obj.getAttribute("data-toggle"));
-
-        if (targetObject.style.display == "none") {
-            targetObject.style.display = "";
-        }
-        else {
-            targetObject.style.display = "none";
-        }
-    }
-</script>
