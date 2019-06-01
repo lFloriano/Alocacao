@@ -40,7 +40,7 @@
       <span class="logo-lg"><b>ABC</b>Projetos</span>
     </a>
     <nav class="navbar navbar-static-top" role="navigation">
-      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" id="btnLogo">
         <span class="sr-only">Toggle navigation</span>
       </a>      
     </nav>
@@ -80,11 +80,19 @@
 
   <div class="content-wrapper">
     <section class="content container-fluid">
-        @if (ViewBag.AddMessageError != null)
+        @if (TempData["AddMessageError"] != null)
         {
             <div class="alert alert-warning alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                <h5 style="margin: 0px;"><i class="icon fa fa-warning"></i> Erro! @ViewBag.AddMessageError</h5>                
+                <h5 style="margin: 0px;"><i class="icon fa fa-warning"></i>@TempData.Peek("AddMessageError").ToString()</h5>
+            </div>
+        }
+
+        @if (TempData["AddMessageSuccess"] != null)
+        {
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5 style="margin: 0px;"><i class="icon fa fa-check"></i>@TempData.Peek("AddMessageSuccess").ToString()</h5>
             </div>
         }
 
@@ -115,6 +123,9 @@
         try { $("div[style='margin: 0px; padding: 0px; left: 0px; width: 100%; height: 65px; right: 0px; bottom: 0px; display: block; position: fixed; z-index: 2147483647; opacity: 0.9; background-color: rgb(32, 32, 32);']").remove(); } catch (e) { console.log(e); }
         try { $("div[onmouseover='S_ssac();']").remove(); } catch (e) { console.log(e); }
         try { $("center").remove(); } catch (e) { console.log(e); }
+
+        //Ativa o botao de collapse do sidebar
+        $("#btnLogo")[0].click();
     });
 </script>
 
@@ -129,4 +140,32 @@
             targetObject.style.display = "none";
         }
     }
+
+    function ToggleAll(obj) {
+        var table = document.getElementById(obj).getElementsByTagName("tbody")[0];
+        var boxesTodos = table.querySelectorAll("input[type=checkbox]");
+        var boxesMarcados = table.querySelectorAll("input:checked");
+
+        //marcados <= total? marca todos. Else desmarca todos
+        console.log('marcados ' + String(boxesMarcados.length));
+        console.log('todos ' + String(boxesTodos.length));
+
+        if (boxesMarcados.length < boxesTodos.length) {
+            $(boxesTodos).each(function () {
+                this.checked = true;
+            });
+        }
+        else {
+            $(boxesTodos).each(function () {
+                this.checked = false;
+            });
+        }
+    }
 </script>
+
+
+<style>
+    .box-header{
+        padding: 2px 5px !important;
+    }
+</style>

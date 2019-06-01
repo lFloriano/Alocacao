@@ -48,7 +48,28 @@ namespace Alocacao.Controllers
             List<Colaborador> listaColaboradores = new List<Colaborador>();
 
             string clauses = "";
-            string queryBusca = @"SELECT * FROM Colaboradores c WHERE 1 = 1 {0} ORDER BY C.Nome";            
+
+            #region queryBusca
+            string queryBusca = @"
+SELECT
+	c.*,
+	COALESCE(a.Numero, 0) AS NumeroProjetos 
+FROM 
+	colaboradores c
+	LEFT JOIN(
+		SELECT
+			IdColaborador,
+			COUNT(*) as Numero
+		FROM
+			Alocacao
+		GROUP BY
+			IdColaborador
+	)a ON a.IdColaborador = c.Id
+WHERE
+    1 = 1
+    {0}
+ORDER BY C.Nome";
+            #endregion
 
             #region Filtro
             if (!String.IsNullOrWhiteSpace(filtro.Nome))
@@ -71,7 +92,7 @@ namespace Alocacao.Controllers
             {
                 if (!ValidarDate(filtro.ContratadoDe.Value))
                 {
-                    ViewBag.AddMessageError = "Data inicial inválida!";
+                    TempData["AddMessageError"]= "Data inicial inválida!";
                     return View("Index", "Colaboradores", new List<Colaborador>());
                 }
                 else
@@ -84,7 +105,7 @@ namespace Alocacao.Controllers
             {
                 if (!ValidarDate(filtro.ContratadoAte.Value))
                 {
-                    ViewBag.AddMessageError = "Data Final inválida!";
+                    TempData["AddMessageError"]= "Data Final inválida!";
                     return View("Index", "Colaboradores", new List<Colaborador>());
                 }
                 else
@@ -95,7 +116,7 @@ namespace Alocacao.Controllers
 
             if ((filtro.ContratadoDe != null && filtro.ContratadoAte != null) && (filtro.ContratadoAte.Value < filtro.ContratadoDe))
             {
-                ViewBag.AddMessageError = "Intervalo de datas inválido!";
+                TempData["AddMessageError"]= "Intervalo de datas inválido!";
                 return View("Index", new List<Colaborador>());
             }
 
@@ -117,7 +138,8 @@ namespace Alocacao.Controllers
                             Cargo = reader["Cargo"].ToString(),
                             Departamento = reader["Departamento"].ToString(),
                             DataContratacao = DateTime.Parse(reader["DataContratacao"].ToString()),
-                            ProfilePic = ""
+                            ProfilePic = "",
+                            NumeroProjetos = int.Parse(reader["NumeroProjetos"].ToString())
                         }
                     );
                 }
@@ -315,6 +337,78 @@ WHERE
             }
 
             return View(colaborador);
+        }
+
+        public ActionResult Alocar(int idColaborador, string[] projetos, DateTime dataInicio, DateTime dataFim, int numeroHoras,
+           int idGestor = 1)
+        {
+            /*TODO add verificacoes
+             Inicio <= fim
+             intervalo de dias contém o numero de horas marcadas
+             numeroHoras > 0
+             colaborador possui horas disponiveis no periodo              
+             */
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand() { Connection = connection };
+            SqlTransaction transaction = null;
+
+            #region queryInsert
+            string queryInsert = @"
+INSERT INTO Alocacao(
+    Criado,
+    DataInicio,
+    DataFim,
+    NumeroHoras,
+    idColaborador,
+    idGestor,
+    idProjeto
+)
+VALUES(
+    GETDATE(),
+    @DataInicio,
+    @DataFim,
+    @NumeroHoras,
+    @IdColaborador,
+    @IdGestor,
+    @IdProjeto
+)";
+            #endregion
+
+            try
+            {
+                connection.Open();
+                command.Transaction = connection.BeginTransaction();
+                command.CommandText = queryInsert;
+
+                foreach (string p in projetos)
+                {
+                    command.Parameters.Clear();
+
+                    command.Parameters.AddWithValue("DataInicio", dataInicio);
+                    command.Parameters.AddWithValue("DataFim", dataInicio);
+                    command.Parameters.AddWithValue("NumeroHoras", numeroHoras);
+                    command.Parameters.AddWithValue("IdColaborador", idColaborador);
+                    command.Parameters.AddWithValue("IdGestor", idGestor);
+                    command.Parameters.AddWithValue("IdProjeto", p);
+
+                    command.ExecuteNonQuery();
+                }
+
+                command.Transaction.Commit();
+                TempData["AddMessageSuccess"] = "Alocação efetuada!";
+            }
+            catch (Exception ex)
+            {
+                command.Transaction.Rollback();
+                TempData["AddMessageError"] = "Erro ao realizar alocação!";
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return RedirectToAction("Colaborador", new { id = idColaborador });
         }
     }
 
