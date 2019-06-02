@@ -169,7 +169,7 @@ ORDER BY C.Nome";
             return retorno;
         }
 
-        public ActionResult Colaborador(int id)
+        public ActionResult Colaborador(int id, string tempType = null, string tempText = null)
         {
             SqlConnection connection = new SqlConnection(connectionString);
             SqlCommand command = new SqlCommand() { Connection = connection };
@@ -224,7 +224,8 @@ SELECT DISTINCT
     g.Nome AS NomeResponsavel,
 	CAST(NumColab.NumeroHoras AS INT) AS NumeroHoras,
 	NumColab.DataInicio AS AlocacaoInicio,
-	NumColab.DataFim AS AlocacaoFim
+	NumColab.DataFim AS AlocacaoFim,
+    NumColab.AlocacaoId
 FROM 
     Projetos p
     LEFT JOIN(
@@ -235,6 +236,7 @@ FROM
 
 	LEFT JOIN (
 		SELECT
+            Id AS AlocacaoId,
 			IdProjeto,
 			COUNT(*) AS ColaboradoresAlocados,
 			NumeroHoras,
@@ -242,7 +244,10 @@ FROM
 			DataFim
 		FROM 
 			Alocacao
+        WHERE 
+            IdColaborador = @IdColaborador	
 		GROUP BY
+            Id,
 			IdProjeto,
 			NumeroHoras,
 			DataInicio,
@@ -332,7 +337,8 @@ WHERE
                             ColaboradoresAlocados = int.Parse(reader["ColaboradoresAlocados"].ToString()),
                             AlocacaoInicio = DateTime.Parse(reader["AlocacaoInicio"].ToString()),
                             AlocacaoFim = DateTime.Parse(reader["AlocacaoFim"].ToString()),
-                            AlocacaoNumeroHoras = int.Parse(reader["NumeroHoras"].ToString())
+                            AlocacaoNumeroHoras = int.Parse(reader["NumeroHoras"].ToString()),
+                            AlocacaoId = int.Parse(reader["AlocacaoId"].ToString())
                         }
                     );
                 }
@@ -350,6 +356,19 @@ WHERE
             finally
             {
                 connection.Close();
+            }
+
+            //creative technical solution for tempData
+            if(tempType != null)
+            {
+                if(tempType.Equals("success"))
+                {
+                    TempData["AddMessageSuccess"] = "Alteração efetuada!";
+                }
+                else
+                {
+                    TempData["AddMessageError"] = "Erro ao efetuar alteração!";
+                }
             }
 
             return View(colaborador);
@@ -451,7 +470,7 @@ SET
     NumeroHoras = @NumeroHoras
 WHERE
     IdColaborador = @IdColaborador
-    AND IdProjeto IN({0})  
+    AND Id IN ({0})  
 ";
             #endregion
 
@@ -483,6 +502,73 @@ WHERE
 
             return RedirectToAction("Colaborador", new { id = idColaborador });
         }
+
+        public ActionResult ExcluirAlocacao(int idColaborador, string[] alocacoes)
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand() { Connection = connection };
+            SqlTransaction transaction = null;
+            Alert resultadoTempData = new Alert();
+
+            #region queryHistorico
+            string queryHistorico = @"
+INSERT INTO Alocacao_Historico(
+	IdAlocacao,
+	CriadoAlocacao,
+	IdColaborador,
+	IdProjeto,
+	IdGestor,
+	NumeroHoras,
+	DataInicio,
+	DataFim
+)
+(
+SELECT
+	Id, Criado, Idcolaborador, IdProjeto, IdGestor, NumeroHoras, DataInicio, DataFim
+FROM
+	Alocacao
+WHERE 
+    Id IN({0})
+)";
+            #endregion
+
+            string queryDelete = String.Format("DELETE FROM Alocacao WHERE Id IN({0})", String.Join(",", alocacoes));
+
+            try
+            {
+                connection.Open();
+                command.Transaction = connection.BeginTransaction();
+
+                #region AddHistorico
+                command.CommandText = String.Format(queryHistorico, String.Join(",", alocacoes));
+                command.ExecuteNonQuery();
+                #endregion
+
+                #region excluir
+                command.CommandText = queryDelete;
+                command.ExecuteNonQuery();
+                #endregion
+
+
+                command.Transaction.Commit();
+
+                resultadoTempData.Text = "Alocação excluida!";
+                resultadoTempData.Type = "success";
+            }
+            catch (Exception ex)
+            {
+                resultadoTempData.Text = "Erro ao excluir alocação!";
+                resultadoTempData.Type = "warning";
+
+                command.Transaction.Rollback();
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return RedirectToAction("Colaborador", new { id = idColaborador });
+        }
     }
 
     public class FiltroColaborador
@@ -493,5 +579,11 @@ WHERE
         public string Departamento { get; set; }
         public DateTime? ContratadoDe { get; set; }
         public DateTime? ContratadoAte { get; set; }
+    }
+
+    public class Alert
+    {
+        public string Type { get; set; }
+        public string Text { get; set; }
     }
 }

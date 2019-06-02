@@ -8,6 +8,7 @@ namespace Alocacao.Models.Colaboradores
 {
     public class AlocacaoProjeto: Projeto
     {
+        public int AlocacaoId { get; set; }
         public DateTime? AlocacaoInicio { get; set; }
         public DateTime? AlocacaoFim { get; set; }
         public int AlocacaoNumeroHoras { get; set; }

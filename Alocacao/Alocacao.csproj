@@ -5977,6 +5977,7 @@
     <Content Include="Content\AdminLTE-2.4.10\plugins\timepicker\bootstrap-timepicker.min.css" />
     <Content Include="Content\AdminLTE-2.4.10\plugins\timepicker\bootstrap-timepicker.min.js" />
     <Content Include="Content\AdminLTE-2.4.10\starter.html" />
+    <Content Include="Content\Profile.PNG" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\ai.0.22.19-build00125.js" />

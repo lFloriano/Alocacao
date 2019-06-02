@@ -147,9 +147,6 @@
         var boxesMarcados = table.querySelectorAll("input:checked");
 
         //marcados <= total? marca todos. Else desmarca todos
-        console.log('marcados ' + String(boxesMarcados.length));
-        console.log('todos ' + String(boxesTodos.length));
-
         if (boxesMarcados.length < boxesTodos.length) {
             $(boxesTodos).each(function () {
                 this.checked = true;
