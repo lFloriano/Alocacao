@@ -175,7 +175,7 @@ ORDER BY C.Nome";
             SqlCommand command = new SqlCommand() { Connection = connection };
             ColaboradorProjetos colaborador = new ColaboradorProjetos();
             colaborador.ProjetosDisponiveis = new List<Projeto>();
-            colaborador.ProjetosAlocados = new List<Projeto>();
+            colaborador.ProjetosAlocados = new List<AlocacaoProjeto>();
 
             #region queryColaborador
             string queryColaborador = @"
@@ -221,7 +221,10 @@ SELECT DISTINCT
     p.*,
 	COALESCE(NumColab.ColaboradoresAlocados, 0) AS ColaboradoresAlocados,
 	c.Nome AS NomeCliente,
-    g.Nome AS NomeResponsavel
+    g.Nome AS NomeResponsavel,
+	CAST(NumColab.NumeroHoras AS INT) AS NumeroHoras,
+	NumColab.DataInicio AS AlocacaoInicio,
+	NumColab.DataFim AS AlocacaoFim
 FROM 
     Projetos p
     LEFT JOIN(
@@ -231,9 +234,19 @@ FROM
 	)a ON a.IdProjeto = p.Id
 
 	LEFT JOIN (
-		SELECT IdProjeto, COUNT(*) AS ColaboradoresAlocados
-		FROM Alocacao
-		GROUP BY IdProjeto
+		SELECT
+			IdProjeto,
+			COUNT(*) AS ColaboradoresAlocados,
+			NumeroHoras,
+			DataInicio,
+			DataFim
+		FROM 
+			Alocacao
+		GROUP BY
+			IdProjeto,
+			NumeroHoras,
+			DataInicio,
+			DataFim
 	)NumColab ON  NumColab.IdProjeto = p.Id
 
 	LEFT JOIN Clientes c on c.Id = p.IdCliente
@@ -304,7 +317,7 @@ WHERE
                 while (reader.Read())
                 {
                     colaborador.ProjetosAlocados.Add(
-                        new Projeto()
+                        new AlocacaoProjeto()
                         {
                             Id = int.Parse(reader["Id"].ToString()),
                             Nome = reader["Nome"].ToString(),
@@ -316,7 +329,10 @@ WHERE
                             IdCliente = int.Parse(reader["IdCliente"].ToString()),
                             NomeCliente = reader["NomeCliente"].ToString(),
                             StatusProjeto = reader["StatusProjeto"].ToString(),
-                            ColaboradoresAlocados = int.Parse(reader["ColaboradoresAlocados"].ToString())
+                            ColaboradoresAlocados = int.Parse(reader["ColaboradoresAlocados"].ToString()),
+                            AlocacaoInicio = DateTime.Parse(reader["AlocacaoInicio"].ToString()),
+                            AlocacaoFim = DateTime.Parse(reader["AlocacaoFim"].ToString()),
+                            AlocacaoNumeroHoras = int.Parse(reader["NumeroHoras"].ToString())
                         }
                     );
                 }
@@ -329,7 +345,7 @@ WHERE
             {
                 colaborador.Colaborador = new Colaborador();
                 colaborador.ProjetosDisponiveis = new List<Projeto>();
-                colaborador.ProjetosAlocados = new List<Projeto>();
+                colaborador.ProjetosAlocados = new List<AlocacaoProjeto>();
             }
             finally
             {
@@ -402,6 +418,63 @@ VALUES(
             {
                 command.Transaction.Rollback();
                 TempData["AddMessageError"] = "Erro ao realizar alocação!";
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return RedirectToAction("Colaborador", new { id = idColaborador });
+        }
+
+        public ActionResult EditarAlocacao(int idColaborador, string[] projetos, DateTime dataInicio, DateTime dataFim, int numeroHoras,
+   int idGestor = 1)
+        {
+            /*TODO add verificacoes
+             Inicio <= fim
+             intervalo de dias contém o numero de horas marcadas
+             numeroHoras > 0
+             colaborador possui horas disponiveis no periodo              
+             */
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand() { Connection = connection };
+            SqlTransaction transaction = null;
+
+            #region queryUpdate
+            string queryUpdate = @"
+UPDATE 
+    Alocacao
+SET
+    DataInicio  = @DataInicio,
+    DataFim     = @DataFim,
+    NumeroHoras = @NumeroHoras
+WHERE
+    IdColaborador = @IdColaborador
+    AND IdProjeto IN({0})  
+";
+            #endregion
+
+            try
+            {
+                connection.Open();
+                command.Transaction = connection.BeginTransaction();
+                command.CommandText = String.Format(queryUpdate, string.Join(",", projetos));
+
+                command.Parameters.Clear();
+                command.Parameters.AddWithValue("DataInicio", dataInicio);
+                command.Parameters.AddWithValue("DataFim", dataInicio);
+                command.Parameters.AddWithValue("NumeroHoras", numeroHoras);
+                command.Parameters.AddWithValue("IdColaborador", idColaborador);
+                command.ExecuteNonQuery();
+
+                command.Transaction.Commit();
+                TempData["AddMessageSuccess"] = "Alocação alterada!";
+            }
+            catch (Exception ex)
+            {
+                command.Transaction.Rollback();
+                TempData["AddMessageError"] = "Erro ao editar alocação!";
             }
             finally
             {

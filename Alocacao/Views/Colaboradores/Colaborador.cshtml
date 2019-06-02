@@ -139,7 +139,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <button style="margin-top: 25px;" type="submit" class="btn btn-block btn-success">Alocar</button>
+                                    <button style="margin-top: 25px;" type="submit" class="btn btn-block btn-primary">Alocar</button>
                                 </div>
                             </div>
 
@@ -149,7 +149,7 @@
                                     <!--Tabela de colaboradores-->
                                     <table class="table table-bordered table-striped" id="tblDisponiveis">
                                         <thead>
-                                            <tr style="background-color: #d8d8d8 !important;">
+                                            <tr>
                                                 <th>
                                                     <input type="checkbox" id="chkMasterDisp" onchange="ToggleAll('tblDisponiveis')" />
                                                 </th>
@@ -160,7 +160,7 @@
                                                 <th>Fim (previsto)</th>
                                                 <th>Status</th>
                                                 <th>Descrição</th>
-                                                <th>Nº Colaboradores alocados</th>
+                                                <th>Nº Colaboradores</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -203,47 +203,143 @@
                         <div class="box-title"><h4>Projetos Alocados</h4></div>
                         <button title="Mostrar/Esconder painel" type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
                             <i class="fa fa-minus"></i>
-                        </button>                
+                        </button>  
+                        <button title="Mostrar/Esconder Filtro" type="button" class="btn bg-primary btn-xs pull-right" data-toggle="filtroAloc" onclick="ToggleFiltro(this)">
+                            <i class="fa fa-search"></i>
+                        </button>              
                     </div>
                     <div class="box-body">
-                        <table class="table table-bordered table-striped" id="tblAlocados">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <input type="checkbox" id="chkMaster" onchange="ToggleAll('tblAlocados')" />
-                                    </th>
-                                    <th>Projeto</th>
-                                    <th>Cliente</th>
-                                    <th>Responsável</th>
-                                    <th>Início</th>
-                                    <th>Fim (previsto)</th>
-                                    <th>Status</th>
-                                    <th>Descrição</th>
-                                    <th>Nº Colaboradores alocados</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (Projeto p in Model.ProjetosAlocados)
-                                {
-                                    string dataInicio = p.DataInicio != null ? p.DataInicio.Value.ToString("dd/MM/yyyy") : "";
-                                    string dataFim = p.DataFim != null ? p.DataFim.Value.ToString("dd/MM/yyyy") : "";
 
+                        <!--Filtro-->
+                        <div class="row" id="filtroAloc" style="display: none;">
+                            @using (Html.BeginForm("FiltrarColaboradores", "Colaboradores", FormMethod.Post))
+                            {
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Projeto</label>
+                                        <input type="text" name="projeto" class="form-control input-sm" id="txtProjeto" placeholder="Projeto">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Cliente</label>
+                                        <input type="name" name="cliente" class="form-control input-sm" id="txtCliente" placeholder="Cliente">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Responsável</label>
+                                        <input type="text" name="responsavel" class="form-control input-sm" id="txtProjeto" placeholder="Responsavel">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Status</label>
+                                        <input type="text" name="status" class="form-control input-sm" id="txtProjeto" placeholder="Status">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Inicio</label>
+                                        <input type="date" name="dtInicio" class="form-control input-sm" id="txtInicio">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Fim</label>
+                                        <input type="date" name="dtFim" class="form-control input-sm" id="txtFim">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Etc</label>
+                                        <input type="text" name="etc" class="form-control input-sm" id="txtEtc">
+                                        <button type="submit" style="margin-top: 35px;" class="btn btn-success btn-block">
+                                            <i class="fa fa-search"></i>&nbsp;
+                                            Filtrar
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+
+                        @using (Html.BeginForm("EditarAlocacao", "Colaboradores", FormMethod.Post))
+                        {
+                            <!--Opções-->
+                            <input type="hidden" name="idColaborador" value="@Model.Colaborador.Id" />
+                            <div class="row" style="margin-top: 5px; margin-bottom: 10px;">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Início</label>
+                                        <input required class="form-control input-sm" type="date" name="dataInicio" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Fim</label>
+                                        <input required class="form-control input-sm" type="date" name="dataFim" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Horas</label>
+                                        <input required class="form-control input-sm" type="number" name="numeroHoras" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <button style="margin-top: 25px; width: 48%;" type="submit" class="btn btn-primary">
+                                        <i class="fa fa-pencil"></i>&nbsp;
+                                        Editar
+                                    </button>
+                                    <button style="margin-top: 25px; width: 48%;" type="submit" class="btn btn-danger">
+                                        <i class="fa fa-eraser"></i>&nbsp;
+                                        Remover
+                                    </button>
+                                </div>
+                            </div>
+
+                            <table class="table table-bordered table-striped" id="tblAlocados">
+                                <thead>
                                     <tr>
-                                        <td>
-                                            <input type="checkbox" id="chkMasterAloc" onchange="ToggleAll()" />
-                                        </td>
-                                        <td>@p.Nome</td>
-                                        <td>@p.NomeCliente</td>
-                                        <td>@p.NomeResponsavel</td>
-                                        <td>@dataInicio</td>
-                                        <td>@dataFim</td>
-                                        <td>@p.StatusProjeto</td>
-                                        <td>@p.Descricao</td>
-                                        <td>@p.ColaboradoresAlocados</td>
+                                        <th>
+                                            <input type="checkbox" id="chkMaster" onchange="ToggleAll('tblAlocados')" />
+                                        </th>
+                                        <th>Projeto</th>
+                                        <th>Cliente</th>
+                                        <th>Responsável</th>
+                                        <th>Início</th>
+                                        <th>Fim (previsto)</th>
+                                        <th>Status</th>
+                                        <th>Descrição</th>
+                                        <th>Nº Colaboradores</th>
+                                        <th>Inicio</th>
+                                        <th>Fim</th>
+                                        <th>Nº Horas</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (AlocacaoProjeto p in Model.ProjetosAlocados)
+                                    {
+                                        string dataInicio = p.DataInicio != null ? p.DataInicio.Value.ToString("dd/MM/yyyy") : "";
+                                        string dataFim = p.DataFim != null ? p.DataFim.Value.ToString("dd/MM/yyyy") : "";
+                                        string alocInicio = p.AlocacaoInicio != null ? p.AlocacaoInicio.Value.ToString("dd/MM/yyyy") : "";
+                                        string alocFim = p.AlocacaoFim != null ? p.AlocacaoFim.Value.ToString("dd/MM/yyyy") : "";
+
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="projetos" value="@p.Id"/>
+                                            </td>
+                                            <td>@p.Nome</td>
+                                            <td>@p.NomeCliente</td>
+                                            <td>@p.NomeResponsavel</td>
+                                            <td>@dataInicio</td>
+                                            <td>@dataFim</td>
+                                            <td>@p.StatusProjeto</td>
+                                            <td>@p.Descricao</td>
+                                            <td>@p.ColaboradoresAlocados</td>
+                                            <td>@alocInicio</td>
+                                            <td>@alocFim</td>
+                                            <td>@p.AlocacaoNumeroHoras</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }                        
                     </div>
                 </div>
             </div>

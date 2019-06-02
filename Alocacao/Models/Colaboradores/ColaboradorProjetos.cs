@@ -10,6 +10,6 @@ namespace Alocacao.Models.Colaboradores
     {
         public Colaborador Colaborador { get; set; }
         public List<Projeto> ProjetosDisponiveis { get; set; }
-        public List<Projeto> ProjetosAlocados { get; set; }
+        public List<AlocacaoProjeto> ProjetosAlocados { get; set; }
     }
 }
