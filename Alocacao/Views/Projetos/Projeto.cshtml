@@ -120,7 +120,7 @@
                         @using (Html.BeginForm("Alocar", "Projetos", FormMethod.Post))
                         {
                             <!--Opções-->
-                            <input type="hidden" name="idColaborador" value="@Model.Projeto.Id" />
+                            <input type="hidden" name="idProjeto" value="@Model.Projeto.Id" />
                             <div class="row" style="margin-top: 5px; margin-bottom: 10px;">
                                 <div class="col-md-3">
                                     <div class="form-group">
@@ -169,7 +169,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        <input type="checkbox" name="projetos" value="@c.Id" />
+                                                        <input type="checkbox" name="colaboradores" value="@c.Id" />
                                                     </td>
                                                     <td>@c.Nome</td>
                                                     <td>@c.Cargo</td>
@@ -254,7 +254,7 @@
                         @using (Html.BeginForm("EditarAlocacao", "Projetos", FormMethod.Post, new { id = "frmAlocados" }))
                         {
                             <!--Opções-->
-                            <input type="hidden" name="idColaborador" value="@Model.Projeto.Id" />
+                            <input type="hidden" name="idProjeto" value="@Model.Projeto.Id" />
                             <div class="row" style="margin-top: 5px; margin-bottom: 10px;">
                                 <div class="col-md-3">
                                     <div class="form-group">
@@ -346,7 +346,7 @@
 
         var table = document.getElementById("tblAlocados").getElementsByTagName("tbody")[0];
         var boxesMarcados = table.querySelectorAll("input:checked");
-        var idColab = $("#frmAlocados")[0].querySelector("input[name=idColaborador]").value;
+        var idProj = $("#frmAlocados")[0].querySelector("input[name=idProjeto]").value;
         var alocacoesArray = [];
 
         $(boxesMarcados).each(function(){
@@ -354,10 +354,11 @@
         });
 
         $.post(
-            '@Url.Action("ExcluirAlocacao", "Colaboradores")',
-            {idColaborador: idColab, alocacoes: alocacoesArray},
+            '@Url.Action("ExcluirAlocacao", "Projetos")',
+            {idProjeto: idProj, alocacoes: alocacoesArray},
             function () {
-                window.location.href = '@Url.Action("Colaborador", "Colaboradores")';
+                window.location.href = '@Url.Action("Projeto", "Projetos")';
+                window.location.reload();
             }
         );
     }

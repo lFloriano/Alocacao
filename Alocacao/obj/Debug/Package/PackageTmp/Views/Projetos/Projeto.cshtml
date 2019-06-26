@@ -1,0 +1,366 @@
+﻿@using Alocacao.Models.Colaboradores
+@using Alocacao.Models.Projetos
+@model ProjetoColaboradores
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--Header-->
+<div class="row">
+
+</div>
+
+<!--pagina completa-->
+<div class="row">
+
+    <!--Info Projeto-->
+    <div class="col-md-2">
+        <div class="box box-solid box-primary">
+            <div class="box-header">
+                <h4 class="box-title">Projeto</h4>
+                <button type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+
+            <div class="box-body box-profile">
+                @*<img class="profile-user-img img-responsive img-circle" src="~/Content/Profile.png" alt="">*@
+                <h3 class="profile-username text-center">@Model.Projeto.Nome</h3>
+                <p class="text-muted text-center">@Model.Projeto.NomeCliente</p>
+                <ul class="list-group list-group-unbordered">
+                    <li class="list-group-item">
+                        <b>Responsável</b> <a class="pull-right">@Model.Projeto.NomeResponsavel</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Início</b> <a class="pull-right">@Model.Projeto.DataInicio.Value.ToString("dd/MM/yyyy")</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Fim</b> <a class="pull-right">@Model.Projeto.DataFim.Value.ToString("dd/MM/yyyy")</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Nº de Colaboradores</b> <a class="pull-right">@Model.Projeto.ColaboradoresAlocados</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Status</b> <a class="pull-right">@Model.Projeto.StatusProjeto</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Descrição</b> <a class="pull-right">@Model.Projeto.Descricao</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!--Projetos-->
+    <div class="col-md-10">
+
+        <!--Disponiveis-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-solid box-primary">
+                    <div class="box-header">
+                        <div class="box-title"><h4>Colaboradores Disponíveis</h4></div>
+                        <button title="Mostrar/Esconder Painel" type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button title="Mostrar/Esconder Filtro" type="button" class="btn bg-primary btn-xs pull-right" data-toggle="filtroDisp" onclick="ToggleFiltro(this)">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="box-body">
+                        <!--Filtro-->
+                        <div class="row" id="filtroDisp" style="display: none;">
+                            @using (Html.BeginForm("FiltraProjetos", "Projetos", FormMethod.Post))
+                            {
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Projeto</label>
+                                        <input type="text" name="projeto" class="form-control input-sm" id="txtProjeto" placeholder="Projeto">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Cliente</label>
+                                        <input type="name" name="cliente" class="form-control input-sm" id="txtCliente" placeholder="Cliente">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Responsável</label>
+                                        <input type="text" name="responsavel" class="form-control input-sm" id="txtProjeto" placeholder="Responsavel">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Status</label>
+                                        <input type="text" name="status" class="form-control input-sm" id="txtProjeto" placeholder="Status">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Inicio</label>
+                                        <input type="date" name="dtInicio" class="form-control input-sm" id="txtInicio">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Fim</label>
+                                        <input type="date" name="dtFim" class="form-control input-sm" id="txtFim">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Etc</label>
+                                        <input type="text" name="etc" class="form-control input-sm" id="txtEtc">
+                                        <button type="submit" style="margin-top: 35px;" class="btn btn-success btn-block">
+                                            <i class="fa fa-search"></i>&nbsp;
+                                            Filtrar
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        @using (Html.BeginForm("Alocar", "Projetos", FormMethod.Post))
+                        {
+                            <!--Opções-->
+                            <input type="hidden" name="idColaborador" value="@Model.Projeto.Id" />
+                            <div class="row" style="margin-top: 5px; margin-bottom: 10px;">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Início</label>
+                                        <input required class="form-control input-sm" type="date" name="dataInicio" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Fim</label>
+                                        <input required class="form-control input-sm" type="date" name="dataFim" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Horas</label>
+                                        <input required class="form-control input-sm" type="number" name="numeroHoras" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <button style="margin-top: 25px;" type="submit" class="btn btn-block btn-primary">Alocar</button>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!--Tabela de colaboradores-->
+                                    <table class="table table-bordered table-striped" id="tblDisponiveis">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <input type="checkbox" id="chkMasterDisp" onchange="ToggleAll('tblDisponiveis')" />
+                                                </th>
+                                                <th>Colaborador</th>
+                                                <th>Cargo</th>
+                                                <th>Departamento</th>
+                                                <th>Contratação</th>
+                                                <th>Nº Projetos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (Colaborador c in Model.ColaboradoresDisponiveis)
+                                            {
+                                                string contratacao = c.DataContratacao!= null ? c.DataContratacao.ToString("dd/MM/yyyy") : "";
+
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" name="projetos" value="@c.Id" />
+                                                    </td>
+                                                    <td>@c.Nome</td>
+                                                    <td>@c.Cargo</td>
+                                                    <td>@c.Departamento</td>
+                                                    <td>@contratacao</td>
+                                                    <td>@c.NumeroProjetos</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Alocados-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-solid box-primary">
+                    <div class="box-header">
+                        <div class="box-title"><h4>Colaboradores Alocados</h4></div>
+                        <button title="Mostrar/Esconder painel" type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button title="Mostrar/Esconder Filtro" type="button" class="btn bg-primary btn-xs pull-right" data-toggle="filtroAloc" onclick="ToggleFiltro(this)">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="box-body">
+
+                        <!--Filtro-->
+                        <div class="row" id="filtroAloc" style="display: none;">
+                            @using (Html.BeginForm("FiltrarProjetos", "Projetos", FormMethod.Post))
+                            {
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Projeto</label>
+                                        <input type="text" name="projeto" class="form-control input-sm" id="txtProjeto" placeholder="Projeto">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Cliente</label>
+                                        <input type="name" name="cliente" class="form-control input-sm" id="txtCliente" placeholder="Cliente">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Responsável</label>
+                                        <input type="text" name="responsavel" class="form-control input-sm" id="txtProjeto" placeholder="Responsavel">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Status</label>
+                                        <input type="text" name="status" class="form-control input-sm" id="txtProjeto" placeholder="Status">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Inicio</label>
+                                        <input type="date" name="dtInicio" class="form-control input-sm" id="txtInicio">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Fim</label>
+                                        <input type="date" name="dtFim" class="form-control input-sm" id="txtFim">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Etc</label>
+                                        <input type="text" name="etc" class="form-control input-sm" id="txtEtc">
+                                        <button type="submit" style="margin-top: 35px;" class="btn btn-success btn-block">
+                                            <i class="fa fa-search"></i>&nbsp;
+                                            Filtrar
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+
+                        @using (Html.BeginForm("EditarAlocacao", "Projetos", FormMethod.Post, new { id = "frmAlocados" }))
+                        {
+                            <!--Opções-->
+                            <input type="hidden" name="idColaborador" value="@Model.Projeto.Id" />
+                            <div class="row" style="margin-top: 5px; margin-bottom: 10px;">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Início</label>
+                                        <input required class="form-control input-sm" type="date" name="dataInicio" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Fim</label>
+                                        <input required class="form-control input-sm" type="date" name="dataFim" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Horas</label>
+                                        <input required class="form-control input-sm" type="number" name="numeroHoras" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <button style="margin-top: 25px; width: 48%;" type="submit" class="btn btn-primary">
+                                        <i class="fa fa-pencil"></i>&nbsp;
+                                        Editar
+                                    </button>
+                                    <button onclick="ExcluirAlocacoes()" style="margin-top: 25px; width: 48%;" type="button" class="btn btn-danger">
+                                        <i class="fa fa-eraser"></i>&nbsp;
+                                        Remover
+                                    </button>
+                                </div>
+                            </div>
+
+                            <table class="table table-bordered table-striped" id="tblAlocados">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="chkMaster" onchange="ToggleAll('tblAlocados')" />
+                                        </th>
+                                        <th>Colaborador</th>
+                                        <th>Cargo</th>
+                                        <th>Departamento</th>
+                                        <th>Contratação</th>
+                                        <th>Nº Projetos</th>
+                                        <th>Inicio</th>
+                                        <th>Fim</th>
+                                        <th>Nº Horas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (AlocacaoColaborador c in Model.ColaboradoresAlocados)
+                                    {
+                                        string dataContratacao = c.DataContratacao!= null ? c.DataContratacao.ToString("dd/MM/yyyy") : "";
+                                        string alocInicio = c.AlocacaoInicio != null ? c.AlocacaoInicio.Value.ToString("dd/MM/yyyy") : "";
+                                        string alocFim = c.AlocacaoFim != null ? c.AlocacaoFim.Value.ToString("dd/MM/yyyy") : "";
+
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="projetos" value="@c.AlocacaoId" />
+                                            </td>
+                                            <td>@c.Nome</td>
+                                            <td>@c.Cargo</td>
+                                            <td>@c.Departamento</td>
+                                            <td>@dataContratacao</td>
+                                            <td>@c.NumeroProjetos</td>
+                                            <td>@alocInicio</td>
+                                            <td>@alocFim</td>
+                                            <td>@c.AlocacaoNumeroHoras</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!--AJAX delete-->
+<script>
+    function ExcluirAlocacoes() {
+        /*
+        pegar chkboxes marcados
+        pegar cod colaborador
+        submit(ajax)
+        reload
+        */
+
+        var table = document.getElementById("tblAlocados").getElementsByTagName("tbody")[0];
+        var boxesMarcados = table.querySelectorAll("input:checked");
+        var idColab = $("#frmAlocados")[0].querySelector("input[name=idColaborador]").value;
+        var alocacoesArray = [];
+
+        $(boxesMarcados).each(function(){
+            alocacoesArray.push(this.value);
+        });
+
+        $.post(
+            '@Url.Action("ExcluirAlocacao", "Colaboradores")',
+            {idColaborador: idColab, alocacoes: alocacoesArray},
+            function () {
+                window.location.href = '@Url.Action("Colaborador", "Colaboradores")';
+            }
+        );
+    }
+
+</script>
+

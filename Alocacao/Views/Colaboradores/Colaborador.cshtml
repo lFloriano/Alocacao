@@ -106,7 +106,7 @@
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Nº Colaboradores</label>
                                     <input type="number" name="etc" class="form-control input-sm" id="txtNumeroColaboradores">
-                                    <button onclick="LimparTabelaColaboradores(this)" type="submit" data-alvo="bxDisp" style="margin-top: 35px; width: 40%;" class="btn btn-primary">
+                                    <button onclick="LimparTabelaColaboradores(this)" type="submit" data-alvo="bxDisp" style="display: none;margin-top: 35px; width: 40%;" class="btn btn-primary">
                                         <i class="fa fa-eraser"></i>&nbsp;
                                         Limpar filtro
                                     </button>
@@ -204,7 +204,7 @@
         <!--Alocados-->
         <div class="row">
             <div class="col-md-12">
-                <div class="box box-solid box-primary">
+                <div class="box box-solid box-primary" id="bxAloc">
                     <div class="box-header">
                         <div class="box-title"><h4>Projetos Alocados</h4></div>
                         <button title="Mostrar/Esconder painel" type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
@@ -218,49 +218,46 @@
 
                         <!--Filtro-->
                         <div class="row" id="filtroAloc" style="display: none;">
-                            @using (Html.BeginForm("FiltrarColaboradores", "Colaboradores", FormMethod.Post))
-                            {
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Projeto</label>
-                                        <input type="text" name="projeto" class="form-control input-sm" id="txtProjeto" placeholder="Projeto">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Cliente</label>
-                                        <input type="name" name="cliente" class="form-control input-sm" id="txtCliente" placeholder="Cliente">
-                                    </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Projeto</label>
+                                    <input type="text" name="projeto" class="form-control input-sm" id="txtProjeto" placeholder="Projeto">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Responsável</label>
-                                        <input type="text" name="responsavel" class="form-control input-sm" id="txtProjeto" placeholder="Responsavel">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Status</label>
-                                        <input type="text" name="status" class="form-control input-sm" id="txtProjeto" placeholder="Status">
-                                    </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Cliente</label>
+                                    <input type="name" name="cliente" class="form-control input-sm" id="txtCliente" placeholder="Cliente">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Inicio</label>
-                                        <input type="date" name="dtInicio" class="form-control input-sm" id="txtInicio">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Fim</label>
-                                        <input type="date" name="dtFim" class="form-control input-sm" id="txtFim">
-                                    </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Responsável</label>
+                                    <input type="text" name="responsavel" class="form-control input-sm" id="txtResponsavel" placeholder="Responsavel">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Etc</label>
-                                        <input type="text" name="etc" class="form-control input-sm" id="txtEtc">
-                                        <button type="submit" style="margin-top: 35px;" class="btn btn-success btn-block">
-                                            <i class="fa fa-search"></i>&nbsp;
-                                            Filtrar
-                                        </button>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Status</label>
+                                    <input type="text" name="status" class="form-control input-sm" id="txtStatus" placeholder="Status">
                                 </div>
-                            }
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Inicio</label>
+                                    <input type="date" name="dtInicio" class="form-control input-sm" id="txtInicio">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Fim</label>
+                                    <input type="date" name="dtFim" class="form-control input-sm" id="txtFim">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Nº Colaboradores</label>
+                                    <input type="text" name="etc" class="form-control input-sm" id="txtNumeroColaboradores">
+                                    <button onclick="FiltrarTabelaColaboradores(this)" type="submit" data-alvo="bxAloc" style="margin-top: 35px;" class="btn btn-success btn-block">
+                                        <i class="fa fa-search"></i>&nbsp;
+                                        Filtrar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
 
@@ -384,7 +381,7 @@
 
 </script>
 
-<!--filtro-->
+<!--filtro Disponiveis-->
 <script>
     function FiltrarTabelaColaboradores(obj) {
         var alvo, boxes, tabela1;
@@ -528,3 +525,98 @@
     }
 </script>
 
+<!--Filtro Alocados-->
+<script>
+    function FiltrarTabelaColaboradores2(obj) {
+        var alvo, boxes, tabela1;
+        var projeto, cliente, inicio, responsavel, status, fim, inicio, fim, numeroColaboradores;
+        var esconder = false;
+
+        //encontrar div alvo e tabela
+        alvo = document.getElementById(obj.getAttribute("data-alvo"));
+        tabela1 = alvo.querySelector("table").querySelector("tbody");
+
+        //desmarcar checkboxes
+        boxes = alvo.querySelectorAll("input[type=checkbox]");
+        for (let i = 0; i < boxes.length; i++) {
+            boxes[i].checked = false;
+        }
+
+        //Encontrar inputs
+        projeto = alvo.querySelector("input[id=txtProjeto]");
+        cliente = alvo.querySelector("input[id=txtCliente]");
+        inicio = alvo.querySelector("input[id=txtInicio]");
+        responsavel = alvo.querySelector("input[id=txtResponsavel]");
+        status = alvo.querySelector("input[id=txtStatus]");
+        fim = alvo.querySelector("input[id=txtFim]");
+        inicio = alvo.querySelector("input[id=txtInicio]");
+        numeroColaboradores = alvo.querySelector("input[id=txtNumeroColaboradores]");
+
+        //percorrer linhas
+        $(tabela1.querySelectorAll("tr")).each(function () {
+            var celulas = this.querySelectorAll("td");
+
+            //Projeto
+            if (projeto.value.trim() != "") {
+                if (!(celulas[1].innerHTML.trim().toLowerCase().includes(projeto.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+
+            //cliente
+            if (cliente.value.trim() != "") {
+                if (!(celulas[2].innerHTML.toLowerCase().includes(cliente.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+
+            //responsavel
+            if (responsavel.value.trim() != "") {
+                if (!(celulas[3].innerHTML.toLowerCase().includes(responsavel.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+
+            //inicio
+            if (inicio.value.trim() != "") {
+                if (!(celulas[4].innerHTML.toLowerCase().includes(formatarData(inicio.value)))) {
+                    esconder = true;
+                }
+            }
+
+            //fim
+            if (fim.value.trim() != "") {
+                if (!(celulas[5].innerHTML.toLowerCase().includes(formatarData(fim.value)))) {
+                    esconder = true;
+                }
+            }
+
+            //status
+            if (status.value.trim() != "") {
+                if (!(celulas[6].innerHTML.toLowerCase().includes(status.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+
+            //numeroColaboradores
+            if (numeroColaboradores.value.trim() != "") {
+                if (!(celulas[8].innerHTML.toLowerCase().includes(numeroColaboradores.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+
+            //Finally, esconde ou não
+            if (esconder == true) {
+                this.style.display = "none";
+            }
+            else if (esconder == false) {
+                this.style.display = "";
+            }
+            else {
+                alert("Informe valores para o filtro!");
+            }
+        });
+
+
+    }
+</script>

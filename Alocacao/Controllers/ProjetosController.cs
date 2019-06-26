@@ -67,6 +67,21 @@ ORDER BY
                 clauses += String.Format(" AND p.Nome LIKE '%{0}%' ", filtro.Nome.Trim());
             }
 
+            if (!String.IsNullOrWhiteSpace(filtro.NomeResponsavel))
+            {
+                clauses += String.Format(" AND g.Nome LIKE '%{0}%' ", filtro.NomeResponsavel.Trim());
+            }
+
+            if (!String.IsNullOrWhiteSpace(filtro.NomeCliente))
+            {
+                clauses += String.Format(" AND c.Nome LIKE '%{0}%' ", filtro.NomeCliente.Trim());
+            }
+
+            if (!String.IsNullOrWhiteSpace(filtro.StatusProjeto))
+            {
+                clauses += String.Format(" AND p.StatusProjeto LIKE '%{0}%' ", filtro.StatusProjeto.Trim());
+            }
+
             //Validacao de data
             if (filtro.DataInicio != null)
             {
@@ -344,6 +359,157 @@ WHERE
             }
 
             return retorno;
+        }
+
+        public ActionResult Filtrar(FiltroProjeto filtro)
+        {
+            ViewBag.Nome = filtro.Nome ?? "";
+            ViewBag.NomeResponsavel = filtro.NomeResponsavel ?? "";
+            ViewBag.DataInicio = filtro.DataInicio!= null ? filtro.DataInicio.Value.ToString("yyyy-MM-dd") : "";
+            ViewBag.DataFim = filtro.DataFim!= null ? filtro.DataFim.Value.ToString("yyyy-MM-dd") : "";
+            ViewBag.NomeCliente = filtro.NomeCliente ?? "";
+            ViewBag.Status = filtro.StatusProjeto ?? "";
+
+            return BuscarProjetos(filtro);
+        }
+
+        public ActionResult Alocar(int idProjeto, string[] colaboradores, DateTime dataInicio, DateTime dataFim, int numeroHoras,
+          int idGestor = 1)
+        {
+            /*TODO add verificacoes
+             Inicio <= fim
+             intervalo de dias contém o numero de horas marcadas
+             numeroHoras > 0
+             colaborador possui horas disponiveis no periodo              
+             */
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand() { Connection = connection };
+            SqlTransaction transaction = null;
+
+            #region queryInsert
+            string queryInsert = @"
+INSERT INTO Alocacao(
+    Criado,
+    DataInicio,
+    DataFim,
+    NumeroHoras,
+    idColaborador,
+    idGestor,
+    idProjeto
+)
+VALUES(
+    GETDATE(),
+    @DataInicio,
+    @DataFim,
+    @NumeroHoras,
+    @IdColaborador,
+    @IdGestor,
+    @IdProjeto
+)";
+            #endregion
+
+            try
+            {
+                connection.Open();
+                command.Transaction = connection.BeginTransaction();
+                command.CommandText = queryInsert;
+
+                foreach (string c in colaboradores)
+                {
+                    command.Parameters.Clear();
+
+                    command.Parameters.AddWithValue("DataInicio", dataInicio);
+                    command.Parameters.AddWithValue("DataFim", dataInicio);
+                    command.Parameters.AddWithValue("NumeroHoras", numeroHoras);
+                    command.Parameters.AddWithValue("IdColaborador", c);
+                    command.Parameters.AddWithValue("IdGestor", idGestor);
+                    command.Parameters.AddWithValue("IdProjeto", idProjeto);
+
+                    command.ExecuteNonQuery();
+                }
+
+                command.Transaction.Commit();
+                TempData["AddMessageSuccess"] = "Alocação efetuada!";
+            }
+            catch (Exception ex)
+            {
+                command.Transaction.Rollback();
+                TempData["AddMessageError"] = "Erro ao realizar alocação!";
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return RedirectToAction("Projeto", new { id = idProjeto });
+        }
+
+        public ActionResult ExcluirAlocacao(int idProjeto, string[] alocacoes)
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand() { Connection = connection };
+            SqlTransaction transaction = null;
+            Alert resultadoTempData = new Alert();
+
+            #region queryHistorico
+            string queryHistorico = @"
+INSERT INTO Alocacao_Historico(
+	IdAlocacao,
+	CriadoAlocacao,
+	IdColaborador,
+	IdProjeto,
+	IdGestor,
+	NumeroHoras,
+	DataInicio,
+	DataFim
+)
+(
+SELECT
+	Id, Criado, Idcolaborador, IdProjeto, IdGestor, NumeroHoras, DataInicio, DataFim
+FROM
+	Alocacao
+WHERE 
+    Id IN({0})
+)";
+            #endregion
+
+            string queryDelete = String.Format("DELETE FROM Alocacao WHERE Id IN({0})", String.Join(",", alocacoes));
+
+            try
+            {
+                connection.Open();
+                command.Transaction = connection.BeginTransaction();
+
+                #region AddHistorico
+                command.CommandText = String.Format(queryHistorico, String.Join(",", alocacoes));
+                command.ExecuteNonQuery();
+                #endregion
+
+                #region excluir
+                command.CommandText = queryDelete;
+                command.ExecuteNonQuery();
+                #endregion
+
+
+                command.Transaction.Commit();
+
+                resultadoTempData.Text = "Alocação excluida!";
+                resultadoTempData.Type = "success";
+            }
+            catch (Exception ex)
+            {
+                resultadoTempData.Text = "Erro ao excluir alocação!";
+                resultadoTempData.Type = "warning";
+
+                command.Transaction.Rollback();
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return RedirectToAction("Colaborador", new { id = idProjeto });
         }
     }
 

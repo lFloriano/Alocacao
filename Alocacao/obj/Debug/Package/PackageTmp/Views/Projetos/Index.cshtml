@@ -1,0 +1,114 @@
+﻿@model List<Projeto>
+@using Alocacao.Models.Projetos;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--Filtro-->
+<div class="row">
+
+    @using (Html.BeginForm("Filtrar", "Projetos", FormMethod.Post))
+    {
+        <div class="col-md-12">
+            <div class="box box-solid box-primary">
+                <div class="box-header">
+                    <h4 class="box-title">Filtro</h4>
+                    <button type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+                <div class="box-body" id="divFiltro">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Projeto</label>
+                                <input value="@ViewBag.Nome" name="NomeProjeto" type="text" class="form-control input-sm" placeholder="Nome">
+                            </div>
+                            <div class="form-group">
+                                <label>Responsável</label>
+                                <input value="@ViewBag.Responsavel" name="NomeResponsavel" type="text" class="form-control input-sm" placeholder="Responsável">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Cliente</label>
+                                <input value="@ViewBag.Nome" name="NomeCliente" type="text" class="form-control input-sm" placeholder="Cliente">
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <input value="@ViewBag.StatusProjeto" name="StatusProjeto" type="text" class="form-control input-sm" placeholder="Status">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Início</label>
+                                <input value="@ViewBag.DataInicio" min="1900-01-01" max="2100-01-01" name="DataInicio" type="date" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Fim</label>
+                                <input value="@ViewBag.DataFim" min="1900-01-01" max="2100-01-01" name="DataFim" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button style="margin-top: 2em;" type="submit" title="filtrar resultados" class="btn btn-flat btn-primary">
+                                <i class="fa fa-search"></i>&nbsp;Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<!--colaboradores-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="box  box-solid box-primary">
+            <div class="box-header">
+                <h4 class="box-title">Projetos</h4>
+            </div>
+            <div class="box-body box-solid box-primary">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Responsável</th>
+                            <th>Inicio</th>
+                            <th>Fim</th>
+                            <th>Cliente</th>
+                            <th>Status</th>
+                            <th>Nº colaboradores</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Projeto p in Model)
+                        {
+                            <tr>
+                                <td>@p.Nome</td>
+                                <td>@p.Descricao</td>
+                                <td>@p.NomeResponsavel</td>
+                                <td>@p.DataInicio.Value.ToString("dd/MM/yyyy")</td>
+                                <td>@p.DataFim.Value.ToString("dd/MM/yyyy")</td>
+                                <td>@p.NomeCliente</td>
+                                <td>@p.StatusProjeto</td>
+                                <td>@p.ColaboradoresAlocados
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Projeto", "Projetos", new { id = p.Id })" style="float: right;" title="Ver detalhes do projeto" class="btn btn-primary btn-xs">
+                                        <i class="fa fa-share"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
