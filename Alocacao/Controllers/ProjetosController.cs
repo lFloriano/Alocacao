@@ -420,7 +420,7 @@ VALUES(
                     command.Parameters.Clear();
 
                     command.Parameters.AddWithValue("DataInicio", dataInicio);
-                    command.Parameters.AddWithValue("DataFim", dataInicio);
+                    command.Parameters.AddWithValue("DataFim", dataFim);
                     command.Parameters.AddWithValue("NumeroHoras", numeroHoras);
                     command.Parameters.AddWithValue("IdColaborador", c);
                     command.Parameters.AddWithValue("IdGestor", idGestor);
@@ -509,7 +509,65 @@ WHERE
                 connection.Close();
             }
 
-            return RedirectToAction("Colaborador", new { id = idProjeto });
+            //return RedirectToAction("Projeto", new { id = idProjeto });
+            return null;
+        }
+
+        public ActionResult EditarAlocacao(int idProjeto, string[] colaboradores, DateTime dataInicio, DateTime dataFim, int numeroHoras,
+int idGestor = 1)
+        {
+            /*TODO add verificacoes
+             Inicio <= fim
+             intervalo de dias contém o numero de horas marcadas
+             numeroHoras > 0
+             colaborador possui horas disponiveis no periodo              
+             */
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand() { Connection = connection };
+            SqlTransaction transaction = null;
+
+            #region queryUpdate
+            string queryUpdate = @"
+UPDATE 
+    Alocacao
+SET
+    DataInicio  = @DataInicio,
+    DataFim     = @DataFim,
+    NumeroHoras = @NumeroHoras
+WHERE
+    IdProjeto = @IdProjeto
+    AND Id IN ({0})  
+";
+            #endregion
+
+            try
+            {
+                connection.Open();
+                command.Transaction = connection.BeginTransaction();
+                command.CommandText = String.Format(queryUpdate, string.Join(",", colaboradores));
+
+                command.Parameters.Clear();
+                command.Parameters.AddWithValue("DataInicio", dataInicio);
+                command.Parameters.AddWithValue("DataFim", dataFim);
+                command.Parameters.AddWithValue("NumeroHoras", numeroHoras);
+                command.Parameters.AddWithValue("IdProjeto", idProjeto);
+                command.ExecuteNonQuery();
+
+                command.Transaction.Commit();
+                TempData["AddMessageSuccess"] = "Alocação alterada!";
+            }
+            catch (Exception ex)
+            {
+                command.Transaction.Rollback();
+                TempData["AddMessageError"] = "Erro ao editar alocação!";
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return RedirectToAction("Projeto", new { id = idProjeto });
         }
     }
 

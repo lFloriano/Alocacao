@@ -311,7 +311,7 @@
 
                                         <tr>
                                             <td>
-                                                <input type="checkbox" name="projetos" value="@c.AlocacaoId" />
+                                                <input type="checkbox" name="colaboradores" value="@c.AlocacaoId" />
                                             </td>
                                             <td>@c.Nome</td>
                                             <td>@c.Cargo</td>
@@ -337,13 +337,6 @@
 <!--AJAX delete-->
 <script>
     function ExcluirAlocacoes() {
-        /*
-        pegar chkboxes marcados
-        pegar cod colaborador
-        submit(ajax)
-        reload
-        */
-
         var table = document.getElementById("tblAlocados").getElementsByTagName("tbody")[0];
         var boxesMarcados = table.querySelectorAll("input:checked");
         var idProj = $("#frmAlocados")[0].querySelector("input[name=idProjeto]").value;
