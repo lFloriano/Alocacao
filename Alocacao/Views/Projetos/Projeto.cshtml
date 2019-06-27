@@ -61,7 +61,7 @@
         <!--Disponiveis-->
         <div class="row">
             <div class="col-md-12">
-                <div class="box box-solid box-primary">
+                <div class="box box-solid box-primary" id="bxDisp">
                     <div class="box-header">
                         <div class="box-title"><h4>Colaboradores Disponíveis</h4></div>
                         <button title="Mostrar/Esconder Painel" type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
@@ -72,51 +72,39 @@
                         </button>
                     </div>
                     <div class="box-body">
+
                         <!--Filtro-->
                         <div class="row" id="filtroDisp" style="display: none;">
-                            @using (Html.BeginForm("FiltraProjetos", "Projetos", FormMethod.Post))
-                            {
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Projeto</label>
-                                        <input type="text" name="projeto" class="form-control input-sm" id="txtProjeto" placeholder="Projeto">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Cliente</label>
-                                        <input type="name" name="cliente" class="form-control input-sm" id="txtCliente" placeholder="Cliente">
-                                    </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Colaborador</label>
+                                    <input type="text" name="colaborador" class="form-control input-sm" id="txtColaborador" placeholder="Colaborador">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Responsável</label>
-                                        <input type="text" name="responsavel" class="form-control input-sm" id="txtProjeto" placeholder="Responsavel">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Status</label>
-                                        <input type="text" name="status" class="form-control input-sm" id="txtProjeto" placeholder="Status">
-                                    </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Cargo</label>
+                                    <input type="text" name="cargo" class="form-control input-sm" id="txtCargo" placeholder="Cargo">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Inicio</label>
-                                        <input type="date" name="dtInicio" class="form-control input-sm" id="txtInicio">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Fim</label>
-                                        <input type="date" name="dtFim" class="form-control input-sm" id="txtFim">
-                                    </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Departamento</label>
+                                    <input type="text" name="departamento" class="form-control input-sm" id="txtDepartamento" placeholder="Departamento">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Etc</label>
-                                        <input type="text" name="etc" class="form-control input-sm" id="txtEtc">
-                                        <button type="submit" style="margin-top: 35px;" class="btn btn-success btn-block">
-                                            <i class="fa fa-search"></i>&nbsp;
-                                            Filtrar
-                                        </button>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Contratação</label>
+                                    <input type="text" name="contratacao" class="form-control input-sm" id="txtContratacao" placeholder="Contratação">
                                 </div>
-                            }
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Número de Projetos</label>
+                                    <input type="number" name="numeroProjetos" class="form-control input-sm" id="txtNumeroProjetos">
+                                    <button onclick="FiltrarTabelaColaboradores(this)" data-alvo="bxDisp" type="button" style="margin-top: 35px;" class="btn btn-success btn-block">
+                                        <i class="fa fa-search"></i>&nbsp;
+                                        Filtrar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         @using (Html.BeginForm("Alocar", "Projetos", FormMethod.Post))
@@ -193,7 +181,7 @@
         <!--Alocados-->
         <div class="row">
             <div class="col-md-12">
-                <div class="box box-solid box-primary">
+                <div class="box box-solid box-primary" id="bxAloc">
                     <div class="box-header">
                         <div class="box-title"><h4>Colaboradores Alocados</h4></div>
                         <button title="Mostrar/Esconder painel" type="button" class="btn bg-primary btn-xs pull-right" data-widget="collapse">
@@ -207,49 +195,36 @@
 
                         <!--Filtro-->
                         <div class="row" id="filtroAloc" style="display: none;">
-                            @using (Html.BeginForm("FiltrarProjetos", "Projetos", FormMethod.Post))
-                            {
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Projeto</label>
-                                        <input type="text" name="projeto" class="form-control input-sm" id="txtProjeto" placeholder="Projeto">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Cliente</label>
-                                        <input type="name" name="cliente" class="form-control input-sm" id="txtCliente" placeholder="Cliente">
-                                    </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Colaborador</label>
+                                    <input type="text" name="colaborador" class="form-control input-sm" id="txtColaborador" placeholder="Colaborador">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Responsável</label>
-                                        <input type="text" name="responsavel" class="form-control input-sm" id="txtProjeto" placeholder="Responsavel">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Status</label>
-                                        <input type="text" name="status" class="form-control input-sm" id="txtProjeto" placeholder="Status">
-                                    </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Cargo</label>
+                                    <input type="text" name="cargo" class="form-control input-sm" id="txtCargo" placeholder="Cargo">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Inicio</label>
-                                        <input type="date" name="dtInicio" class="form-control input-sm" id="txtInicio">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Fim</label>
-                                        <input type="date" name="dtFim" class="form-control input-sm" id="txtFim">
-                                    </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Departamento</label>
+                                    <input type="text" name="departamento" class="form-control input-sm" id="txtDepartamento" placeholder="Departamento">
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Etc</label>
-                                        <input type="text" name="etc" class="form-control input-sm" id="txtEtc">
-                                        <button type="submit" style="margin-top: 35px;" class="btn btn-success btn-block">
-                                            <i class="fa fa-search"></i>&nbsp;
-                                            Filtrar
-                                        </button>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Contratação</label>
+                                    <input type="text" name="contratacao" class="form-control input-sm" id="txtContratacao" placeholder="Contratação">
                                 </div>
-                            }
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Número de Projetos</label>
+                                    <input type="number" name="numeroProjetos" class="form-control input-sm" id="txtNumeroProjetos">
+                                    <button onclick="FiltrarTabelaColaboradores(this)" data-alvo="bxAloc" type="button" style="margin-top: 35px;" class="btn btn-success btn-block">
+                                        <i class="fa fa-search"></i>&nbsp;
+                                        Filtrar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
 
@@ -360,3 +335,130 @@
 
 </script>
 
+
+<!--filtro Disponiveis-->
+<script>
+    function FiltrarTabelaColaboradores(obj) {
+        var alvo, boxes, tabela1;
+        var colaborador, cardo, departamento, contratacao, numeroProjetos;
+        var esconder = false;
+
+        //encontrar div alvo e tabela
+        alvo = document.getElementById(obj.getAttribute("data-alvo"));
+        tabela1 = alvo.querySelector("table").querySelector("tbody");
+
+        //desmarcar checkboxes
+        boxes = alvo.querySelectorAll("input[type=checkbox]");
+        for (let i = 0; i < boxes.length; i ++){
+            boxes[i].checked = false;
+        }
+
+        //Encontrar inputs
+        colaborador = alvo.querySelector("input[id=txtColaborador]");
+        cargo = alvo.querySelector("input[id=txtCargo]");
+        departamento = alvo.querySelector("input[id=txtDepartamento]");
+        contratacao = alvo.querySelector("input[id=txtContratacao]");
+        numeroProjetos = alvo.querySelector("input[id=txtNumeroProjetos]");
+
+        //percorrer linhas
+        $(tabela1.querySelectorAll("tr")).each(function () {
+            var celulas = this.querySelectorAll("td");
+
+            //colab
+            if (colaborador.value.trim() != "") {
+                if (!(celulas[1].innerHTML.toLowerCase().includes(colaborador.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+
+            //cargo
+            if (cargo.value.trim() != "") {
+                if (!(celulas[2].innerHTML.toLowerCase().includes(cargo.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+
+            //departamento
+            if (departamento.value.trim() != "") {
+                if (!(celulas[3].innerHTML.toLowerCase().includes(departamento.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+
+            //contratacao
+            if (contratacao.value.trim() != "") {
+                if (!(celulas[4].innerHTML.toLowerCase().includes(formatarData(contratacao.value)))) {
+                    esconder = true;
+                }
+            }
+
+            //numeroProjetos
+            if (numeroProjetos.value.trim() != "") {
+                if (!(celulas[5].innerHTML.toLowerCase().includes(numeroProjetos.value.trim().toLowerCase()))) {
+                    esconder = true;
+                }
+            }
+                      
+            //Finally, esconde ou não
+            if (esconder == true) {
+                this.style.display = "none";
+            }
+            else if(esconder == false) {
+                this.style.display = "";
+            }
+            else {
+                alert("Informe valores para o filtro!");
+            }
+        });
+
+
+    }
+
+    function LimparTabelaColaboradores(obj) {
+        var alvo, boxes;
+        var projeto, cliente, inicio, responsavel, status, fim, inicio, fim, numeroColaboradores;
+
+        alvo = document.getElementById(obj.getAttribute("data-alvo"));
+
+        projeto = alvo.querySelector("input[id=txtProjeto]");
+        cliente = alvo.querySelector("input[id=txtCliente]");
+        inicio = alvo.querySelector("input[id=txtInicio]");
+        responsavel = alvo.querySelector("input[id=txtResponsavel]");
+        status = alvo.querySelector("input[id=txtStatus]");
+        fim = alvo.querySelector("input[id=txtFim]");
+        inicio = alvo.querySelector("input[id=txtInicio]");
+        numeroColaboradores = alvo.querySelector("input[id=txtNumeroColaboradores]");
+
+        alvo.value = "";
+        projeto.value = "";
+        cliente.value = "";
+        inicio.value = "";
+        responsavel.value = "";
+        status.value = "";
+        fim.value = "";
+        inicio.value = "";
+        numeroColaboradores.value = "";
+
+        //TODO: mostrar todas as linhas: display = "" p/ todas as <TR>
+
+    }
+
+    function formatarData(dtString) {
+        var d, dia, mes, ano, retorno;
+        d = new Date(dtString);
+
+        dia = (d.getDate() + 1);
+        dia < 10 ? dia = '0' + String(dia) : String(dia);
+
+        mes = (d.getMonth() + 1);
+        mes < 10 ? mes = '0' + String(mes) : String(mes);
+
+        ano = d.getFullYear();
+        ano < 10 ? ano = '0' + String(ano) : String(ano);
+
+        retorno = dia + "/" + mes + "/" + ano;
+
+
+        return retorno;
+    }
+</script>
