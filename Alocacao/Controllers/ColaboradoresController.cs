@@ -18,17 +18,7 @@ namespace Alocacao.Controllers
         {
             return BuscarColaboradores(new FiltroColaborador());
         }
-
-        /*
-         nome
-         numeroproj
-         cargo
-         dpto
-         dtcont ini
-         dtcont ate
-             */
-
-        
+                
         public ActionResult Filtrar(FiltroColaborador filtro)
         {
             ViewBag.Nome = filtro.Nome ?? "";
@@ -377,12 +367,43 @@ WHERE
         public ActionResult Alocar(int idColaborador, string[] projetos, DateTime dataInicio, DateTime dataFim, int numeroHoras,
            int idGestor = 1)
         {
-            /*TODO add verificacoes
-             Inicio <= fim
-             intervalo de dias contém o numero de horas marcadas
-             numeroHoras > 0
-             colaborador possui horas disponiveis no periodo              
-             */
+            #region Validacoes
+
+            int horasIntervalo = 0;
+            //horasIntervalo = (dataFim - dataInicio).Hours;
+            horasIntervalo = Convert.ToInt32((dataFim - dataInicio).TotalHours);
+
+
+            if (projetos == null || projetos.Length <= 0)
+            {
+                TempData["AddMessageError"] = "Informe os projetos para alocação!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+
+            if (horasIntervalo < numeroHoras)
+            {
+                TempData["AddMessageError"] = "O período selecionado não comporta o número de horas!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+
+            if (numeroHoras <= 0)
+            {
+                TempData["AddMessageError"] = "Informe um número de horas positivo!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+
+            if (ValidarDate(dataInicio) == false || ValidarDate(dataFim) == false)
+            {
+                TempData["AddMessageError"] = "As datas devem estar num intervalo válido (1900 - 2100)!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+
+            if (dataFim < dataInicio)
+            {
+                TempData["AddMessageError"] = "Data final deve suceder data inicial!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+            #endregion
 
             SqlConnection connection = new SqlConnection(connectionString);
             SqlCommand command = new SqlCommand() { Connection = connection };
@@ -449,12 +470,41 @@ VALUES(
         public ActionResult EditarAlocacao(int idColaborador, string[] projetos, DateTime dataInicio, DateTime dataFim, int numeroHoras,
    int idGestor = 1)
         {
-            /*TODO add verificacoes
-             Inicio <= fim
-             intervalo de dias contém o numero de horas marcadas
-             numeroHoras > 0
-             colaborador possui horas disponiveis no periodo              
-             */
+            #region Validacoes
+
+            int horasIntervalo = 0;
+            horasIntervalo = Convert.ToInt32((dataFim - dataInicio).TotalHours);
+
+            if (projetos == null || projetos.Length <= 0)
+            {
+                TempData["AddMessageError"] = "Informe os projetos para alocação!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+
+            if (horasIntervalo < numeroHoras)
+            {
+                TempData["AddMessageError"] = "O período selecionado não comporta o número de horas!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+
+            if (numeroHoras <= 0)
+            {
+                TempData["AddMessageError"] = "Informe um número de horas positivo!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+
+            if (ValidarDate(dataInicio) == false || ValidarDate(dataFim) == false)
+            {
+                TempData["AddMessageError"] = "As datas devem estar num intervalo válido (1900 - 2100)!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+
+            if (dataFim < dataInicio)
+            {
+                TempData["AddMessageError"] = "Data final deve suceder data inicial!";
+                return RedirectToAction("Colaborador", "Colaboradores", new { id = idColaborador });
+            }
+            #endregion
 
             SqlConnection connection = new SqlConnection(connectionString);
             SqlCommand command = new SqlCommand() { Connection = connection };

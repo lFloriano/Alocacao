@@ -376,12 +376,42 @@ WHERE
         public ActionResult Alocar(int idProjeto, string[] colaboradores, DateTime dataInicio, DateTime dataFim, int numeroHoras,
           int idGestor = 1)
         {
-            /*TODO add verificacoes
-             Inicio <= fim
-             intervalo de dias contém o numero de horas marcadas
-             numeroHoras > 0
-             colaborador possui horas disponiveis no periodo              
-             */
+
+            #region Validacoes
+
+            int horasIntervalo = 0;
+            horasIntervalo = Convert.ToInt32((dataFim - dataInicio).TotalHours);
+
+            if (colaboradores == null || colaboradores.Length <= 0)
+            {
+                TempData["AddMessageError"] = "Informe os colaboradores para alocação!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+
+            if(horasIntervalo < numeroHoras)
+            {
+                TempData["AddMessageError"] = "O período selecionado não comporta o número de horas!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+
+            if(numeroHoras <= 0)
+            {
+                TempData["AddMessageError"] = "Informe um número de horas positivo!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+
+            if(ValidarDate(dataInicio) == false|| ValidarDate(dataFim) == false)
+            {
+                TempData["AddMessageError"] = "As datas devem estar num intervalo válido (1900 - 2100)!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+
+            if(dataFim < dataInicio)
+            {
+                TempData["AddMessageError"] = "Data final deve suceder data inicial!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+            #endregion
 
             SqlConnection connection = new SqlConnection(connectionString);
             SqlCommand command = new SqlCommand() { Connection = connection };
@@ -516,12 +546,40 @@ WHERE
         public ActionResult EditarAlocacao(int idProjeto, string[] colaboradores, DateTime dataInicio, DateTime dataFim, int numeroHoras,
 int idGestor = 1)
         {
-            /*TODO add verificacoes
-             Inicio <= fim
-             intervalo de dias contém o numero de horas marcadas
-             numeroHoras > 0
-             colaborador possui horas disponiveis no periodo              
-             */
+            #region Validacoes
+            int horasIntervalo = 0;
+            horasIntervalo = Convert.ToInt32((dataFim - dataInicio).TotalHours);
+
+            if (colaboradores == null || colaboradores.Length <= 0)
+            {
+                TempData["AddMessageError"] = "Informe os colaboradores para alocação!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+
+            if (horasIntervalo < numeroHoras)
+            {
+                TempData["AddMessageError"] = "O período selecionado não comporta o número de horas!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+
+            if (numeroHoras <= 0)
+            {
+                TempData["AddMessageError"] = "Informe um número de horas positivo!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+
+            if (ValidarDate(dataInicio) == false || ValidarDate(dataFim) == false)
+            {
+                TempData["AddMessageError"] = "As datas devem estar num intervalo válido (1900 - 2100)!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+
+            if (dataFim < dataInicio)
+            {
+                TempData["AddMessageError"] = "Data final deve suceder data inicial!";
+                return RedirectToAction("Projeto", "Projetos", new { id = idProjeto });
+            }
+            #endregion
 
             SqlConnection connection = new SqlConnection(connectionString);
             SqlCommand command = new SqlCommand() { Connection = connection };
